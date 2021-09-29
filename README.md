@@ -8,8 +8,8 @@ recent Router
 
 | Method | URL Pattern     | Handler       | Action                     |
 | ------ | --------------- | ------------- | -------------------------- |
-| ANY    | /               | home          | Display the hoem page      |
-| ANY    | /snippet        | showSnippet   | Display a specific snippet |
+| ANY    | /               | home          | Display the home page      |
+| ANY    | /snippet?id=1   | showSnippet   | Display a specific snippet |
 | POST   | /snippet/create | createSnippet | Create a new snippet       |
 
 2021-9-28 16:43:41 createProject
