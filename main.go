@@ -23,6 +23,17 @@ func showSnippet(w http.ResponseWriter, r *http.Request) {
 
 // createSnippet:Create a new snippet
 func createSnippet(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		// Suppressing System-Generated Headers
+		// w.Header()["Date"] = nil
+
+		// w.WriteHeader(http.StatusMethodNotAllowed)
+		// w.Write([]byte("Method Not Allowed"))
+		// 上面可以简化于下面
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	w.Write([]byte("Create a new snippet..."))
 }
 
