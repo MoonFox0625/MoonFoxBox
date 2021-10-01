@@ -1,10 +1,9 @@
-// Date:  2021/9/28 22:04
+// Date:  2021/10/1 14:04
 // Desc:
 package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -25,7 +24,7 @@ func showSnippet(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	fmt.Fprintf(w, "Display a specific snippet with ID: %d", id)
+	_, _ = fmt.Fprintf(w, "Display a specific snippet with ID: %d", id)
 }
 
 // createSnippet:Create a new snippet
@@ -41,20 +40,5 @@ func createSnippet(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	w.Write([]byte("Create a new snippet..."))
-}
-
-// main function
-func main() {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet", showSnippet)
-	mux.HandleFunc("/snippet/create", createSnippet)
-
-	log.Println("Staring server on 4000")
-	err := http.ListenAndServe(":4000", mux)
-	if err != nil {
-		log.Fatal(err)
-	}
+	_, _ = w.Write([]byte("Create a new snippet..."))
 }
