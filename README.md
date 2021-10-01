@@ -11,7 +11,7 @@ recent Router
 | ANY    | /               | home            | Display the home page        |
 | ANY    | /snippet?id=1   | showSnippet     | Display a specific snippet   |
 | POST   | /snippet/create | createSnippet   | Create a new snippet         |
-| ANY    | /static/        | http.FileServer | Serve a spectifc static file |
+| ANY    | /static/        | http.FileServer | Serve a specific static file |
 
 
 
@@ -20,4 +20,6 @@ recent Router
 2021-9-28 23:53:08 chapter2.4 router requests
 
 2021-9-29 23:59:53 Chapter 2.5. Customizing HTTP Headers
+
+2021-10-1 23:37:57 Finished chapter2 foundations
 
