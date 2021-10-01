@@ -6,11 +6,14 @@ golang版本： go1.16
 
 recent Router
 
-| Method | URL Pattern     | Handler       | Action                     |
-| ------ | --------------- | ------------- | -------------------------- |
-| ANY    | /               | home          | Display the home page      |
-| ANY    | /snippet?id=1   | showSnippet   | Display a specific snippet |
-| POST   | /snippet/create | createSnippet | Create a new snippet       |
+| Method | URL Pattern     | Handler         | Action                       |
+| ------ | --------------- | --------------- | ---------------------------- |
+| ANY    | /               | home            | Display the home page        |
+| ANY    | /snippet?id=1   | showSnippet     | Display a specific snippet   |
+| POST   | /snippet/create | createSnippet   | Create a new snippet         |
+| ANY    | /static/        | http.FileServer | Serve a spectifc static file |
+
+
 
 2021-9-28 16:43:41 createProject
 
