@@ -23,3 +23,5 @@ recent Router
 
 2021-10-1 23:37:57 Finished chapter2 foundations
 
+2021-10-2 20:27:55 Finished chapter3 Configuration and Error Handling
+
