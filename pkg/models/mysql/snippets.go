@@ -59,5 +59,32 @@ WHERE expires > UTC_TIMESTAMP()
 
 // Latest  This will return the 10 most recently created snippets.
 func (sm *SnippetModel) Latest() ([]*models.Snippet, error) {
-	return nil, nil
+	stmt := `SELECT id, title, content, created, expires
+FROM snippets
+WHERE UTC_TIMESTAMP() < expires
+ORDER BY created DESC
+LIMIT 10;`
+
+	rows, err := sm.DB.Query(stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var snippets []*models.Snippet
+
+	for rows.Next() {
+		var s = &models.Snippet{}
+		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
+		if err != nil {
+			return nil, err
+		}
+		snippets = append(snippets, s)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return snippets, nil
 }
