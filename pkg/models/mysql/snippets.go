@@ -6,6 +6,7 @@ package mysql
 import (
 	"MoonFoxBox/pkg/models"
 	"database/sql"
+	"errors"
 )
 
 // SnippetModel Define a SnippetModel type which wraps a sql.DB connection pool.
@@ -34,11 +35,29 @@ VALUES (?, ?, UTC_TIMESTAMP,DATE_ADD(UTC_TIMESTAMP,INTERVAL ? DAY ))`
 }
 
 // Get This will return a specific snippet based on its id.
-func (sm *SnippetModel) Get(id int) (*models.Snippets, error) {
-	return nil, nil
+func (sm *SnippetModel) Get(id int) (*models.Snippet, error) {
+	stmt := `SELECT id, title, content, created, expires
+FROM snippets
+WHERE expires > UTC_TIMESTAMP()
+  AND id = ?;`
+
+	var s = &models.Snippet{}
+	// row := sm.DB.QueryRow(stmt, id)
+	// err := row.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
+	// 上面的代码可以简写成下面
+	err := sm.DB.QueryRow(stmt, id).Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+
+	return s, nil
 }
 
 // Latest  This will return the 10 most recently created snippets.
-func (sm *SnippetModel) Latest() ([]*models.Snippets, error) {
+func (sm *SnippetModel) Latest() ([]*models.Snippet, error) {
 	return nil, nil
 }
