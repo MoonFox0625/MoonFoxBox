@@ -3,7 +3,9 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"net/http"
 	"os"
@@ -24,6 +26,8 @@ func main() {
 	// flag will be stored in the addr variable at runtime.
 	addr := flag.String("addr", ":4000", "http network address")
 
+	// Define a new command-line flag for the MySQL DSN string.
+	dsn := flag.String("dsn", "web:ws2356K+@/moonfoxbox?parseTime=true", "Mysql data source name")
 	// Importantly, we use the flag.Parse() function to parse the command-line flag.
 	// This reads in the command-line flag value and assigns it to the addr
 	// variable. You need to call this *before* you use the addr variable
@@ -43,6 +47,21 @@ func main() {
 	// file name and line number.
 	errorLog := log.New(os.Stderr, "ERROR\t", log.LstdFlags|log.Lshortfile)
 
+	// To keep the main() function tidy I've put the code for creating a connection
+	// pool into the separate openDB() function below. We pass openDB() the DSN
+	// from the command-line flag.
+	db, err := openDB(*dsn)
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			errorLog.Println(err)
+			return
+		}
+	}(db)
+
 	// Initialize a new instance of application containing the dependencies.
 	app := &application{
 		errorLog: errorLog,
@@ -60,8 +79,21 @@ func main() {
 	}
 
 	infoLog.Printf("Staring server on port %s", strings.TrimPrefix(*addr, ":"))
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		errorLog.Fatal(err)
 	}
+}
+
+// The openDB() function wraps sql.Open() and returns a sql.DB connection pool
+// for a given DSN.
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+	return db, nil
 }
