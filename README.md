@@ -9,11 +9,9 @@ recent Router
 | Method | URL Pattern     | Handler         | Action                       |
 | ------ | --------------- | --------------- | ---------------------------- |
 | ANY    | /               | home            | Display the home page        |
-| ANY    | /snippet?id=1   | showSnippet     | Display a specific snippet   |
-| POST   | /snippet/create | createSnippet   | Create a new snippet         |
+| ANY    | /s?id=1   | showSnippet     | Display a specific s   |
+| POST   | /s/create | createSnippet   | Create a new s         |
 | ANY    | /static/        | http.FileServer | Serve a specific static file |
-
-
 
 2021-9-28 16:43:41 createProject
 
@@ -25,3 +23,4 @@ recent Router
 
 2021-10-2 20:27:55 Finished chapter3 Configuration and Error Handling
 
+2021-10-5 22:07:22 Finished Chapter4. Database-Driven Responses
