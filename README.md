@@ -26,3 +26,5 @@ recent Router
 2021-10-5 22:07:22 Finished Chapter4. Database-Driven Responses
 
 2021-10-8 17:55:55 Finished chapter5.  Dynamic HTML Templates
+
+2021-10-8 22:39:58 Finished chapter6. Middleware
