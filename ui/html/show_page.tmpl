@@ -5,16 +5,18 @@
 
 
 {{ define "main"}}
-    <div class="snippet">
-        <div class="metadata">
-            <strong>{{ .Snippet.Title }}</strong>
-            <span>#{{ .Snippet.ID }}</span>
-        </div>
-        <pre><code>{{ .Snippet.Content }}</code></pre>
+    {{ with .Snippet }}
+        <div class="snippet">
+            <div class="metadata">
+                <strong>{{ .Title }}</strong>
+                <span>#{{ .ID }}</span>
+            </div>
+            <pre><code>{{ .Content }}</code></pre>
 
-        <div class="metadata">
-            <time>Create: {{ .Snippet.Created }}</time>
-            <time>Expires: {{ .Snippet.Expires }}</time>
+            <div class="metadata">
+                <time>Create: {{ .Created }}</time>
+                <time>Expires: {{ .Expires }}</time>
+            </div>
         </div>
-    </div>
+    {{ end }}
 {{ end }}
