@@ -6,6 +6,7 @@ import (
 	"MoonFoxBox/pkg/models"
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -70,7 +71,22 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	_, _ = fmt.Fprintf(w, "Display a specific snippet with ID: %d\n%v", id, snippet)
+	// _, _ = fmt.Fprintf(w, "Display a specific snippet with ID: %d\n%v", id, snippet)
+	files := []string{
+		"./ui/html/show_page.tmpl",
+		"./ui/html/base_layout.tmpl",
+		"./ui/html/footer_partial.tmpl",
+	}
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	err = ts.Execute(w, snippet)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 }
 
 // createSnippet:Create a new snippet

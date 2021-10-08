@@ -1,0 +1,18 @@
+{{ template "base" . }}
+
+
+{{ define "title"}}Snippet #{{ .ID }}{{end }}
+
+
+{{ define "main"}}
+    <div class="snippet">
+        <strong>{{ .Title }}</strong>
+        <span>#{{ .ID }}</span>
+    </div>
+    <pre><code>{{ .Content }}</code></pre>
+
+    <div class="metadata">
+        <time>Create: {{ .Created }}</time>
+        <time>Expires: {{ .Expires }}</time>
+    </div>
+{{ end }}
