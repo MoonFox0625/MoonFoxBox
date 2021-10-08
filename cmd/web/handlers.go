@@ -6,7 +6,6 @@ import (
 	"MoonFoxBox/pkg/models"
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -26,29 +25,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	data := &templateData{Snippets: snippets}
 
-	// Initialize a slice containing the paths to the two files. Note that the
-	// home.page.tmpl file must be the *first* file in the slice.
-	files := []string{
-		"./ui/html/home_page.tmpl",
-		"./ui/html/base_layout.tmpl",
-		"./ui/html/footer_partial.tmpl",
-	}
-	// Use the template.ParseFiles() function to read the files and store the
-	// templates in a template set. Notice that we can pass the slice of file paths
-	// as a variadic parameter?
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	// We then use the Execute() method on the template set to write the template
-	// content as the response body. The last parameter to Execute() represents any
-	// dynamic data that we want to pass in, which for now we'll leave as nil
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	app.render(w, r, "home_page.tmpl", data)
 }
 
 // showSnippet : Display a specific snippet
@@ -72,22 +49,8 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := &templateData{Snippet: snippet}
-	// _, _ = fmt.Fprintf(w, "Display a specific snippet with ID: %d\n%v", id, snippet)
-	files := []string{
-		"./ui/html/show_page.tmpl",
-		"./ui/html/base_layout.tmpl",
-		"./ui/html/footer_partial.tmpl",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+
+	app.render(w, r, "show_page.tmpl", data)
 }
 
 // createSnippet:Create a new snippet
