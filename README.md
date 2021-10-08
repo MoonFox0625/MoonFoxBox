@@ -24,3 +24,5 @@ recent Router
 2021-10-2 20:27:55 Finished chapter3 Configuration and Error Handling
 
 2021-10-5 22:07:22 Finished Chapter4. Database-Driven Responses
+
+2021-10-8 17:55:55 Finished chapter5.  Dynamic HTML Templates
