@@ -9,9 +9,9 @@ recent Router
 | Method | URL Pattern     | Handler         | Action                       |
 | ------ | --------------- | --------------- | ---------------------------- |
 | ANY    | /               | home            | Display the home page        |
-| ANY    | /s?id=1   | showSnippet     | Display a specific s   |
-| POST   | /s/create | createSnippet   | Create a new s         |
-| ANY    | /static/        | http.FileServer | Serve a specific static file |
+| ANY    | /snippet/:id | showSnippet     | Display a specific snippet   |
+| POST   | /snippet/create | createSnippet   | Create a new snippet         |
+| ANY    | /snippet/static/        | http.FileServer | Serve a specific static file |
 
 2021-9-28 16:43:41 createProject
 
@@ -25,6 +25,9 @@ recent Router
 
 2021-10-5 22:07:22 Finished Chapter4. Database-Driven Responses
 
-2021-10-8 17:55:55 Finished chapter5.  Dynamic HTML Templates
+2021-10-8 17:55:55 Finished chapter5. Dynamic HTML Templates
 
 2021-10-8 22:39:58 Finished chapter6. Middleware
+
+2021-10-14 11:05:20 Finished chapter7. RESTful Routing
+
