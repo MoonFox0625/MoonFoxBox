@@ -12,11 +12,13 @@ import (
 
 // home : Displaying the home page
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
-	// panic("oops! something went wrong") // Deliberate panic
+	// Because Pat matches the "/" path exactly, we can now remove the manual check
+	// of r.URL.Path != "/" from this handler.
+
+	// if r.URL.Path != "/" {
+	// 	app.notFound(w)
+	// 	return
+	// }
 
 	snippets, err := app.snippets.Latest()
 	if err != nil {
@@ -31,7 +33,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 // showSnippet : Display a specific snippet
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	// Pat doesn't strip the colon from the named capture key, so we need to
+	// get the value of ":id" from the query string instead of "id".
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
@@ -56,17 +60,8 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 
 // createSnippet:Create a new snippet
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		// Suppressing System-Generated Headers
-		// w.Header()["Date"] = nil
-
-		// w.WriteHeader(http.StatusMethodNotAllowed)
-		// w.Write([]byte("Method Not Allowed"))
-		// 上面可以简化于下面
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
+	// Checking if the request method is a POST is now superfluous and can be
+	// removed.
 
 	// Create some variables holding dummy data. We'll remove these later on
 	// during the build.
@@ -78,6 +73,11 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, err)
 	}
-	// Redirect the user to the relevant page for the snippet.
-	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+	// Change the redirect to use the new semantic URL style of /snippet/:id
+	http.Redirect(w, r, fmt.Sprintf("/snippet/id=%d", id), http.StatusSeeOther)
+}
+
+// Add a new createSnippetForm handler, which for now returns a placeholder response.
+func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Create a snippet ..."))
 }
