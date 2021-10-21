@@ -3,13 +3,12 @@
 package main
 
 import (
+	"MoonFoxBox/pkg/forms"
 	"MoonFoxBox/pkg/models"
 	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
-	"unicode/utf8"
 )
 
 // home : Displaying the home page
@@ -71,46 +70,27 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
-	title := r.PostForm.Get("title")
-	content := r.PostForm.Get("content")
-	expires := r.PostForm.Get("expires")
 
-	errors := make(map[string]string)
+	// Create a new forms.Form struct containing the POSTed data from the
+	// form, then use the validation methods to check the content.
+	form := forms.New(r.PostForm)
+	form.Required("title", "content", "expires")
+	form.MaxLength("title")
+	form.PermittedValues("expires", "365", "7", "1")
 
-	// Check that the title field is not blank and is not more than 100 characters
-	// long. If it fails either of those checks, add a message to the errors
-	// long. If it fails either of those checks, add a message to the errors
-	// map using the field name as the key.
-	if strings.TrimSpace(title) == "" {
-		errors["title"] = "The field can't be blank"
-	} else if utf8.RuneCountInString(title) > 100 {
-		errors["title"] = "The field is too long (maximum is 100 characters)"
-	}
-	// Check that the Content field isn't blank.
-	if strings.TrimSpace(content) == "" {
-		errors["content"] = "The field can't be blank"
-	}
-	// Check the expires field isn't blank and matches one of the permitted
-	// values ("1", "7" or "365").
-	if strings.TrimSpace(expires) == "" {
-		errors["expires"] = "The field can't be blank"
-	} else if expires != "1" && expires != "7" && expires != "365" {
-		errors["expires"] = "This field is invalid"
-	}
-
-	// If there are any validation errors, re-display the create.page.tmpl
-	// template passing in the validation errors and previously submitted
-	// r.PostForm data.
-	if len(errors) > 0 {
-		// fmt.Fprintf(w, "%v", errors)
+	// If the form isn't valid, redisplay the template passing in the
+	// form.Form object as the data.
+	if !form.Valid() {
 		app.render(w, r, "create_page.tmpl", &templateData{
-			FormData:   r.PostForm,
-			FormErrors: errors,
+			Form: form,
 		})
 		return
 	}
 
-	id, err := app.snippets.Insert(title, content, expires)
+	// Because the form data (with type url.Values) has been anonymously embedded
+	// in the form.Form struct, we can use the Get() method to retrieve
+	// the validated value for a particular form field.
+	id, err := app.snippets.Insert(form.Get("title"), form.Get("content"), form.Get("expires"))
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -120,5 +100,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 
 // Add a new createSnippetForm handler, which for now returns a placeholder response.
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "create_page.tmpl", nil)
+	app.render(w, r, "create_page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
 }

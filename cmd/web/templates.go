@@ -4,9 +4,9 @@
 package main
 
 import (
+	"MoonFoxBox/pkg/forms"
 	"MoonFoxBox/pkg/models"
 	"html/template"
-	"net/url"
 	"path"
 	"path/filepath"
 	"time"
@@ -20,8 +20,7 @@ type templateData struct {
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 	CurrentYear int
-	FormData    url.Values
-	FormErrors  map[string]string
+	Form        *forms.Form
 }
 
 // Create a humanDate function which returns a nicely formatted string

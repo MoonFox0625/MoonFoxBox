@@ -11,7 +11,10 @@ recent Router
 | ANY    | /               | home            | Display the home page        |
 | ANY    | /snippet/:id | showSnippet     | Display a specific snippet   |
 | POST   | /snippet/create | createSnippet   | Create a new snippet         |
+| GET | /snippet/create | createSnippetForm | DisPlay a new snippet Form |
 | ANY    | /snippet/static/        | http.FileServer | Serve a specific static file |
+
+
 
 2021-9-28 16:43:41 createProject
 
@@ -31,3 +34,4 @@ recent Router
 
 2021-10-14 11:05:20 Finished chapter7. RESTful Routing
 
+2021-10-21 23:17:29 Processing Forms
