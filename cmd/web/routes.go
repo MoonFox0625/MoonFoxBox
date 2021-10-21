@@ -16,9 +16,9 @@ func (app *application) routes() http.Handler {
 
 	// The pattern "/" is a special case. It will only match requests where the URL path is exactly "/".
 	mux.Get("/", http.HandlerFunc(app.home))
-	mux.Get("/snippet/:id", http.HandlerFunc(app.showSnippet))
-	mux.Post("/snippet/create", http.HandlerFunc(app.createSnippet))
 	mux.Get("/snippet/create", http.HandlerFunc(app.createSnippetForm))
+	mux.Post("/snippet/create", http.HandlerFunc(app.createSnippet))
+	mux.Get("/snippet/:id", http.HandlerFunc(app.showSnippet)) // Moved down
 
 	// Create a file server which serves files out of the "./ui/static" directory.
 	// Note that the path given to the http.Dir function is relative to the project
