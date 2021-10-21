@@ -60,21 +60,25 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 
 // createSnippet:Create a new snippet
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	// Checking if the request method is a POST is now superfluous and can be
-	// removed.
-
-	// Create some variables holding dummy data. We'll remove these later on
-	// during the build.
-	title := "O snail"
-	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
-	expires := "7"
+	// First we call r.ParseForm() which adds any data in POST request bodies
+	// to the r.PostForm map. This also works in the same way for PUT and PATCH
+	// requests. If there are any errors, we use our app.ClientError helper to send
+	// a 400 Bad Request response to the user.
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	expires := r.PostForm.Get("expires")
 
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
 		app.serverError(w, err)
 	}
 	// Change the redirect to use the new semantic URL style of /snippet/:id
-	http.Redirect(w, r, fmt.Sprintf("/snippet/id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
 
 // Add a new createSnippetForm handler, which for now returns a placeholder response.
