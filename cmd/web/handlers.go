@@ -54,9 +54,9 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := &templateData{Snippet: snippet}
-
-	app.render(w, r, "show_page.tmpl", data)
+	app.render(w, r, "show_page.tmpl", &templateData{
+		Snippet: snippet,
+	})
 }
 
 // createSnippet:Create a new snippet
@@ -94,6 +94,14 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, err)
 	}
+
+	// Use the Put() method to add a string value ("Your snippet was saved
+	// successfully!") and the corresponding key ("flash") to the session
+	// data. Note that if there's no existing session for the current user
+	// (or their session has expired) then a new, empty, session for them
+	// will automatically be created by the session middleware.
+	app.session.Put(r, "flash", "Your snippet was saved successfully")
+
 	// Change the redirect to use the new semantic URL style of /snippet/:id
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
