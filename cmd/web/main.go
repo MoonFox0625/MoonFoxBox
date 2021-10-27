@@ -7,11 +7,13 @@ import (
 	"database/sql"
 	"flag"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/golangcollege/sessions"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 // Define an application struct to hold the application-wide dependencies for the
@@ -22,6 +24,7 @@ type application struct {
 	errorLog      *log.Logger
 	snippets      *mysql.SnippetModel
 	templateCache map[string]*template.Template
+	session       *sessions.Session
 }
 
 func main() {
@@ -32,6 +35,11 @@ func main() {
 
 	// Define a new command-line flag for the MySQL DSN string.
 	dsn := flag.String("dsn", "web:ws2356K+@/moonfoxbox?parseTime=true", "Mysql data source name")
+
+	// Define a new command-line flag for the session secret (a random key which
+	// will be used to encrypt and authenticate session cookies). It should be 32
+	// bytes long.
+	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key")
 	// Importantly, we use the flag.Parse() function to parse the command-line flag.
 	// This reads in the command-line flag value and assigns it to the addr
 	// variable. You need to call this *before* you use the addr variable
@@ -73,12 +81,19 @@ func main() {
 		return
 	}
 
+	// Use the sessions.New() function to initialize a new session manager,
+	// passing in the secret key as the parameter. Then we configure it so
+	// sessions always expires after 12 hours.
+	session := sessions.New([]byte(*secret))
+	session.Lifetime = 12 * time.Hour
+
 	// Initialize a new instance of application containing the dependencies.
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		snippets:      &mysql.SnippetModel{DB: db},
 		templateCache: cache,
+		session:       session,
 	}
 
 	// Initialize a new http.Server struct. We set the Addr and Handler fields so
