@@ -4,6 +4,7 @@ package main
 
 import (
 	"MoonFoxBox/pkg/models/mysql"
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	_ "github.com/go-sql-driver/mysql"
@@ -86,6 +87,7 @@ func main() {
 	// sessions always expires after 12 hours.
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
+	session.Secure = true // Set the Secure flag on our session cookies
 
 	// Initialize a new instance of application containing the dependencies.
 	app := &application{
@@ -96,18 +98,33 @@ func main() {
 		session:       session,
 	}
 
+	// Initialize a tls.Config struct to hold the non-default TLS settings we want
+	// the server to use.
+	tlsConfig := &tls.Config{
+		PreferServerCipherSuites: true,
+		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
+	}
+
 	// Initialize a new http.Server struct. We set the Addr and Handler fields so
 	// that the server uses the same network address and routes as before, and set
 	// the ErrorLog field so that the server now uses the custom errorLog logger in
 	// the event of any problems.
 	srv := &http.Server{
-		Addr:     *addr,
-		Handler:  app.routes(),
-		ErrorLog: errorLog,
+		Addr:      *addr,
+		Handler:   app.routes(),
+		ErrorLog:  errorLog,
+		TLSConfig: tlsConfig,
+		// Add Idle, Read and Write timeouts to the server.
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	infoLog.Printf("Staring server on port %s", strings.TrimPrefix(*addr, ":"))
-	err = srv.ListenAndServe()
+	// Use the ListenAndServeTLS() method to start the HTTPS server. We
+	// pass in the paths to the TLS certificate and corresponding private key as
+	// the two parameters.
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
